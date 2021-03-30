@@ -101,3 +101,28 @@ const calcDisplayBalance = function (movements) {
 };
 
 calcDisplayBalance(account1.movements);
+
+const caclDisplaySummary = function (movements) {
+  const summaryIn = movements
+    .filter(mov => mov > 0)
+    .reduce((acc, mov) => acc + mov, 0);
+
+  labelSumIn.textContent = `${summaryIn}€`;
+
+  const summaryOut = movements
+    .filter(mov => mov < 0)
+    .reduce((acc, mov) => acc + mov, 0);
+  labelSumOut.textContent = `${Math.abs(summaryOut)}€`;
+
+  //interest is paid on each deposit, interest is for example 1.2% of the deposited amount
+  //bank only pays an interest, if that interest is at least one euro (only then it will be added to total)
+  const percent = 1.2 / 100;
+  const interest = movements
+    .filter(mov => mov > 0)
+    .map(deposit => percent * deposit)
+    .filter(inter => inter >= 1)
+    .reduce((acc, int) => acc + int, 0);
+  labelSumInterest.textContent = `${interest}€`;
+};
+
+caclDisplaySummary(account1.movements);
