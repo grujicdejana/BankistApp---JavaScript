@@ -81,3 +81,14 @@ const displayMovements = function (movements) {
 };
 
 displayMovements(account1.movements);
+
+const createUsername = function (accs) {
+  accs.forEach(function (acc) {
+    acc.username = acc.owner //with this we create a new property username, on account object
+      .split(' ')
+      .map(word => word.slice(0, 1).toLocaleLowerCase())
+      .join('');
+  });
+};
+
+createUsername(accounts);
