@@ -92,3 +92,12 @@ const createUsername = function (accs) {
 };
 
 createUsername(accounts);
+
+//balance value
+const calcDisplayBalance = function (movements) {
+  const balance = movements.reduce((acc, cur) => acc + cur, 0);
+
+  labelBalance.textContent = `${balance}€`;
+};
+
+calcDisplayBalance(account1.movements);
