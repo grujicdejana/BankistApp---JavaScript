@@ -80,7 +80,7 @@ const displayMovements = function (movements) {
   });
 };
 
-displayMovements(account1.movements);
+//displayMovements(account1.movements);
 
 const createUsername = function (accs) {
   accs.forEach(function (acc) {
@@ -93,6 +93,41 @@ const createUsername = function (accs) {
 
 createUsername(accounts);
 
+//login
+let currentAccount;
+btnLogin.addEventListener('click', function (e) {
+  e.preventDefault();
+
+  currentAccount = accounts.find(
+    acc => acc.username === inputLoginUsername.value
+  );
+  //console.log(currentAccount);
+  
+  if (currentAccount?.pin === Number(inputLoginPin.value)) {
+    //Display UI and welcome message
+    labelWelcome.textContent = `Welcome back ${
+      currentAccount.owner.split(' ')[0]
+    }`;
+    containerApp.style.opacity = 100;
+
+    //Clear input fields
+    inputLoginUsername.value = inputLoginPin.value = '';
+    inputLoginPin.blur(); 
+
+    //Display balance, summary and movements
+    //Movements
+    displayMovements(currentAccount.movements);
+    //Balance
+    calcDisplayBalance(currentAccount.movements);
+    //Summarty
+    caclDisplaySummary(currentAccount);
+  } else {
+    labelWelcome.textContent = `There is no user with this PIN 😞`;
+    containerApp.style.opacity = 0;
+  }
+});
+
+
 //balance value
 const calcDisplayBalance = function (movements) {
   const balance = movements.reduce((acc, cur) => acc + cur, 0);
@@ -100,24 +135,24 @@ const calcDisplayBalance = function (movements) {
   labelBalance.textContent = `${balance}€`;
 };
 
-calcDisplayBalance(account1.movements);
+//calcDisplayBalance(account1.movements);
 
-const caclDisplaySummary = function (movements) {
-  const summaryIn = movements
+const caclDisplaySummary = function (acc) {
+  const summaryIn = acc.movements
     .filter(mov => mov > 0)
     .reduce((acc, mov) => acc + mov, 0);
 
   labelSumIn.textContent = `${summaryIn}€`;
 
-  const summaryOut = movements
+  const summaryOut = acc.movements
     .filter(mov => mov < 0)
     .reduce((acc, mov) => acc + mov, 0);
   labelSumOut.textContent = `${Math.abs(summaryOut)}€`;
 
   //interest is paid on each deposit, interest is for example 1.2% of the deposited amount
   //bank only pays an interest, if that interest is at least one euro (only then it will be added to total)
-  const percent = 1.2 / 100;
-  const interest = movements
+  const percent = acc.interestRate / 100;
+  const interest = acc.movements
     .filter(mov => mov > 0)
     .map(deposit => percent * deposit)
     .filter(inter => inter >= 1)
@@ -125,4 +160,4 @@ const caclDisplaySummary = function (movements) {
   labelSumInterest.textContent = `${interest}€`;
 };
 
-caclDisplaySummary(account1.movements);
+//caclDisplaySummary(account1.movements);
