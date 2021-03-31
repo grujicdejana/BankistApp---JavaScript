@@ -115,12 +115,7 @@ btnLogin.addEventListener('click', function (e) {
     inputLoginPin.blur(); 
 
     //Display balance, summary and movements
-    //Movements
-    displayMovements(currentAccount.movements);
-    //Balance
-    calcDisplayBalance(currentAccount.movements);
-    //Summarty
-    caclDisplaySummary(currentAccount);
+    updateUI(currentAccount);
   } else {
     labelWelcome.textContent = `There is no user with this PIN 😞`;
     containerApp.style.opacity = 0;
@@ -129,10 +124,9 @@ btnLogin.addEventListener('click', function (e) {
 
 
 //balance value
-const calcDisplayBalance = function (movements) {
-  const balance = movements.reduce((acc, cur) => acc + cur, 0);
-
-  labelBalance.textContent = `${balance}€`;
+const calcDisplayBalance = function (acc) {
+  acc.balance = acc.movements.reduce((acc, cur) => acc + cur, 0);
+  labelBalance.textContent = `${acc.balance}€`;
 };
 
 //calcDisplayBalance(account1.movements);
@@ -161,3 +155,37 @@ const caclDisplaySummary = function (acc) {
 };
 
 //caclDisplaySummary(account1.movements);
+
+//transfer
+btnTransfer.addEventListener('click', function (e) {
+  e.preventDefault();
+
+  const receiver = accounts.find(acc => acc.username === inputTransferTo.value);
+  const transferAmount = Number(inputTransferAmount.value);
+
+  if (
+    transferAmount > 0 &&
+    currentAccount.balance >= transferAmount &&
+    receiver?.username !== currentAccount.username
+  ) {
+    //console.log('Transfer valid');
+	//Doing the transfer	
+	receiver.movements.push(transferAmount);
+	currentAccount.movements.push(-transferAmount);
+	
+	//Update UI
+	updateUI(currentAccount);
+  }
+  
+  inputTransferTo.value = inputTransferAmount.value = '';
+  inputTransferAmount.blur();
+});
+
+const updateUI = function (currAcc) {
+  //Display movements
+  displayMovements(currAcc.movements);
+  //Display balance
+  calcDisplayBalance(currAcc);
+  //Display summary
+  caclDisplaySummary(currAcc);
+};
