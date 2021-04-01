@@ -189,3 +189,31 @@ const updateUI = function (currAcc) {
   //Display summary
   caclDisplaySummary(currAcc);
 };
+
+//close the account
+btnClose.addEventListener('click', function (e) {
+  e.preventDefault();
+
+  if (
+    inputCloseUsername.value === currentAccount.username &&
+    Number(inputClosePin.value) === currentAccount?.pin
+  ) {
+    const closeAccount = accounts.findIndex(
+      acc => acc.username === inputCloseUsername.value
+    );
+    //console.log(closeAccount);
+
+    accounts.splice(closeAccount, 1);
+    logOut();
+  } else {
+    inputCloseUsername.value = inputClosePin.value = '';
+    inputClosePin.blur();
+    console.log("You cannot delete someone's other account");
+  }
+});
+
+//logout
+const logOut = function () {
+  labelWelcome.textContent = `Log in to get started`;
+  containerApp.style.opacity = 0;
+};
