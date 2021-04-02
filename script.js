@@ -237,3 +237,9 @@ const logOut = function () {
   labelWelcome.textContent = `Log in to get started`;
   containerApp.style.opacity = 0;
 };
+
+//the bank itself wants to calculate the overall balance of all the movements of all the accounts.
+const overallBalance = accounts
+  .flatMap(acc => acc.movements)
+  .reduce((mov, cur) => mov + cur);
+console.log(overallBalance);
