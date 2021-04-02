@@ -190,6 +190,26 @@ const updateUI = function (currAcc) {
   caclDisplaySummary(currAcc);
 };
 
+//grants a loan if there at least one deposit with at least 10% of the requested loan amount.
+btnLoan.addEventListener('click', function (e) {
+  e.preventDefault();
+
+  const amount = Number(inputLoanAmount.value);
+
+  if (
+    amount > 0 &&
+    currentAccount.movements.some(mov => mov > 0 && mov >= amount * 0.1)
+  ) {
+    currentAccount.movements.push(amount);
+    updateUI(currentAccount);
+  } else {
+    console.log('Unfortunately, you have not been granted a loan.');
+  }
+
+  inputLoanAmount.value = '';
+  inputLoanAmount.blur();
+});
+
 //close the account
 btnClose.addEventListener('click', function (e) {
   e.preventDefault();
