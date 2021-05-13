@@ -313,12 +313,17 @@ btnLoan.addEventListener('click', function (e) {
     amount > 0 &&
     currentAccount.movements.some(mov => mov > 0 && mov >= amount * 0.1)
   ) {
-    currentAccount.movements.push(amount);
+	  setTimeout(function(){
+		//Add movement
+		currentAccount.movements.push(amount);
 	
-	 //Add loan date
-    currentAccount.movementsDates.push(new Date().toISOString());
-	
-    updateUI(currentAccount);
+	    //Add loan date
+		currentAccount.movementsDates.push(new Date().toISOString());
+		
+		//Update UI
+		updateUI(currentAccount);
+	  }, 2500);
+  
   } else {
     console.log('Unfortunately, you have not been granted a loan.');
   }
