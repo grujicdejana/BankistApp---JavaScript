@@ -123,6 +123,14 @@ const formatMovementDate = function (date) {
   }
 };
 
+//function for formatting the currencies
+const formatCur = function (value, locale, currency) {
+  return new Intl.NumberFormat(locale, {
+    style: 'currency',
+    currency: currency,
+  }).format(value);
+};
+
 const displayMovements = function (currAcc, sort = false) {
   containerMovements.innerHTML = '';
   
@@ -137,13 +145,16 @@ const displayMovements = function (currAcc, sort = false) {
 	const date = new Date(acc.movementsDates[i]);
     const displayDate = formatMovementDate(date);
 
+	const formattedMov = formatCur(mov, acc.locale, acc.currency);
+
+	
     const html = `
     <div class="movements__row">
       <div class="movements__type movements__type--${type}">${
       i + 1
     } ${type}</div>
 	  <div class="movements__date">${displayDate}</div>
-      <div class="movements__value">${mov.toFixed(2)}</div>
+      <div class="movements__value">${formattedMov}</div>
     </div>`;
 
     containerMovements.insertAdjacentHTML('afterbegin', html);
@@ -221,7 +232,7 @@ btnLogin.addEventListener('click', function (e) {
 //balance value
 const calcDisplayBalance = function (acc) {
   acc.balance = acc.movements.reduce((acc, cur) => acc + cur, 0);
-  labelBalance.textContent = `${acc.balance.toFixed(2)}€`;
+  labelBalance.textContent = formatCur(acc.balance, acc.locale, acc.currency);
 };
 
 //calcDisplayBalance(account1.movements);
@@ -231,12 +242,14 @@ const caclDisplaySummary = function (acc) {
     .filter(mov => mov > 0)
     .reduce((acc, mov) => acc + mov, 0);
 
-  labelSumIn.textContent = `${summaryIn.toFixed(2)}€`;
+  labelSumIn.textContent = formatCur(summaryIn, acc.locale, acc.currency);
+
 
   const summaryOut = acc.movements
     .filter(mov => mov < 0)
     .reduce((acc, mov) => acc + mov, 0);
-  labelSumOut.textContent = `${Math.abs(summaryOut).toFixed(2)}€`;
+  labelSumOut.textContent = formatCur(Math.abs(summaryOut), acc.locale, acc.currency);
+
 
   //interest is paid on each deposit, interest is for example 1.2% of the deposited amount
   //bank only pays an interest, if that interest is at least one euro (only then it will be added to total)
@@ -246,7 +259,8 @@ const caclDisplaySummary = function (acc) {
     .map(deposit => percent * deposit)
     .filter(inter => inter >= 1)
     .reduce((acc, int) => acc + int, 0);
-  labelSumInterest.textContent = `${interest.toFixed(2)}€`;
+  labelSumInterest.textContent = formatCur(interest, acc.locale, acc.currency);
+
 };
 
 //caclDisplaySummary(account1.movements);
