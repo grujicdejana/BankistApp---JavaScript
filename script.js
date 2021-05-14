@@ -175,13 +175,41 @@ const createUsername = function (accs) {
 createUsername(accounts);
 
 //login
-let currentAccount;
+let currentAccount, timer;
 
 //fake always logged in
 currentAccount = account1;
 updateUI(currentAccount);
 containerApp.style.opacity = 100;
 
+const startLogOutTimer = function () {
+  const tick = function () {
+    const min = String(Math.trunc(time / 60)).padStart(2, 0);
+    const sec = String(time % 60).padStart(2, 0);
+    //in each call, print the remaining time to UI
+    labelTimer.textContent = `${min}:${sec}`;
+
+    //when 0 second, stop timer and log out user
+    if (time === 0) {
+      clearInterval(timer);
+
+      labelWelcome.textContent = 'Log in to get started';
+      containerApp.style.opacity = 0;
+    }
+
+    time--;
+  };
+
+  //set time to 10 minutes
+  let time = 120; //new Date();
+  //tenMin.setTime(10000); //10 min
+
+  //call the timer every second
+  tick();
+  const timer = setInterval(tick, 1000);
+  
+  return timer;
+};
 
 btnLogin.addEventListener('click', function (e) {
   e.preventDefault();
@@ -220,6 +248,9 @@ btnLogin.addEventListener('click', function (e) {
     inputLoginUsername.value = inputLoginPin.value = '';
     inputLoginPin.blur(); 
 
+	if (timer) clearInterval(timer);
+	timer = startLogOutTimer();
+	
     //Display balance, summary and movements
     updateUI(currentAccount);
   } else {
@@ -288,6 +319,10 @@ btnTransfer.addEventListener('click', function (e) {
 	
 	//Update UI
 	updateUI(currentAccount);
+	
+	//Reset timer
+    clearInterval(timer);
+    timer = startLogOutTimer();
   }
   
   inputTransferTo.value = inputTransferAmount.value = '';
@@ -322,6 +357,10 @@ btnLoan.addEventListener('click', function (e) {
 		
 		//Update UI
 		updateUI(currentAccount);
+		
+		//Reset timer
+		clearInterval(timer);
+		timer = startLogOutTimer();
 	  }, 2500);
   
   } else {
